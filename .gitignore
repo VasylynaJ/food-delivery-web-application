@@ -1,0 +1,18 @@
+# Java / Maven
+backend/target/
+*.class
+*.log
+
+# Node / React
+frontend/node_modules/
+frontend/dist/
+npm-debug.log*
+
+# Local secrets and tooling
+**/.env
+**/.env.*
+!.env.example
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
