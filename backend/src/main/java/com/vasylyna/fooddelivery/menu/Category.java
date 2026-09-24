@@ -11,4 +11,5 @@ public class Category {
     protected Category() {}
     public Category(Restaurant restaurant,String name){this.restaurant=restaurant;this.name=name;}
     public Long getId(){return id;} public String getName(){return name;} public Long getRestaurantId(){return restaurant.getId();}
+    public Restaurant getRestaurant(){return restaurant;}
 }

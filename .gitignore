@@ -6,7 +6,11 @@ backend/target/
 # Node / React
 frontend/node_modules/
 frontend/dist/
+frontend/.npm-cache/
 npm-debug.log*
+
+# Local scratch files
+work/
 
 # Local secrets and tooling
 **/.env

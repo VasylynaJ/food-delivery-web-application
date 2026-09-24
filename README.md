@@ -10,7 +10,7 @@ This is a personal learning and portfolio project. It does not represent employm
 
 - Customer registration and login with BCrypt password hashing and signed JWT bearer tokens.
 - CUSTOMER and ADMIN roles, with admin API authorization.
-- Restaurant search, cuisine filtering, restaurant details, ratings, opening hours, and menu browsing.
+- Restaurant search, cuisine filtering, restaurant details, ratings, configurable delivery fees, opening hours, and menu browsing.
 - Admin restaurant and menu category/item create, read, update, and delete operations.
 - Authenticated cart with quantity changes, server-calculated subtotal, delivery charge, and total. A cart holds items from one restaurant at a time.
 - Checkout creates an address and order; order item name and price are snapshots so later menu edits do not rewrite past orders.
@@ -33,10 +33,10 @@ The project is a monorepo. `backend/` is a layered Spring application organized 
 
 ## Database structure
 
-Flyway migration `V1__create_core_schema.sql` creates:
+Flyway migration `V1__create_core_schema.sql` creates the core tables:
 
 - `app_users`: unique email, BCrypt hash, CUSTOMER/ADMIN role.
-- `restaurants`: cuisine, constrained 0–5 rating, opening hours, image URL, and open state.
+- `restaurants`: cuisine, constrained 0–5 rating, opening hours, image URL, and open state. `V2__add_restaurant_delivery_fee.sql` adds the non-negative `delivery_fee`, defaulting to 0.00 for existing restaurants.
 - `categories` and `menu_items`: restaurant menu hierarchy with unique category names per restaurant and non-negative prices.
 - `addresses`: customer delivery address data.
 - `carts` and `cart_items`: one cart per user, positive quantities, unique cart/item pairs.
@@ -64,6 +64,8 @@ Foreign keys, uniqueness constraints, check constraints, and indexes enforce cor
 | PATCH | `/api/admin/orders/{id}/status` | Admin | Advance order status |
 
 Validation errors return HTTP 400 with field messages; missing resources return HTTP 404; duplicate registration returns HTTP 409. Order status transitions are checked by the service. Customer order queries are scoped to the authenticated account.
+
+The cart fee is read from the restaurant reached through `CartItem → MenuItem → Category → Restaurant`; checkout uses the same server-side calculation and persists it on the order. The frontend formats prices in euros.
 
 ## Installation
 
@@ -149,7 +151,7 @@ Backend tests use JUnit 5, AssertJ, and Mockito. From `backend/`, run:
 mvn test
 ```
 
-The test suite covers authentication registration/password hashing, restaurant search, menu listing, cart totals, and order checkout snapshots and totals. Test execution has not been verified in the authoring environment because Java and Maven were unavailable.
+The test suite covers authentication registration/password hashing, restaurant search, menu listing, cart totals, and order checkout snapshots and totals. In the Codex Windows sandbox, Maven compilation is blocked when Javac canonicalizes downloaded dependency jars (`AccessDeniedException`), so the JUnit tests could not run here. Run `mvn test` locally from `backend/` to execute them.
 
 To build the backend artifact locally, run `mvn clean package` from `backend/`. To create a production frontend bundle, run `npm run build` from `frontend/`.
 
