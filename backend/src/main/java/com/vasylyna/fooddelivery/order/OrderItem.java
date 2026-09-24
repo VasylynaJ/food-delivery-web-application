@@ -8,5 +8,5 @@ import com.vasylyna.fooddelivery.menu.MenuItem;import jakarta.persistence.*;impo
  @Column(name="unit_price",nullable=false,precision=10,scale=2) private BigDecimal unitPrice;
  @Column(nullable=false) private int quantity;
  protected OrderItem(){}public OrderItem(CustomerOrder order,MenuItem item,String name,BigDecimal price,int quantity){this.order=order;this.menuItem=item;this.itemName=name;this.unitPrice=price;this.quantity=quantity;}
- public String getItemName(){return itemName;}public BigDecimal getUnitPrice(){return unitPrice;}public int getQuantity(){return quantity;}
+ public Long getOrderId(){return order.getId();}public String getItemName(){return itemName;}public BigDecimal getUnitPrice(){return unitPrice;}public int getQuantity(){return quantity;}
 }

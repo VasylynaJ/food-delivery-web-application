@@ -1,15 +1,43 @@
 package com.vasylyna.fooddelivery.menu;
-import com.vasylyna.fooddelivery.common.ResourceNotFoundException;import com.vasylyna.fooddelivery.restaurant.*;import jakarta.validation.Valid;import jakarta.validation.constraints.*;import java.math.BigDecimal;import java.util.List;
-import org.springframework.http.HttpStatus;import org.springframework.web.bind.annotation.*;
-import org.springframework.transaction.annotation.Transactional;
-@Transactional @RestController @RequestMapping("/api/admin/restaurants/{restaurantId}/menu") public class AdminMenuController{
- private final RestaurantRepository restaurants;private final CategoryRepository categories;private final MenuItemRepository items;
- public AdminMenuController(RestaurantRepository restaurants,CategoryRepository categories,MenuItemRepository items){this.restaurants=restaurants;this.categories=categories;this.items=items;}
- @GetMapping public List<MenuController.MenuItemResponse> list(@PathVariable Long restaurantId){requireRestaurant(restaurantId);return items.findByCategory_Restaurant_IdOrderByCategory_NameAscNameAsc(restaurantId).stream().map(MenuController.MenuItemResponse::from).toList();}
- @PostMapping @ResponseStatus(HttpStatus.CREATED) public MenuController.MenuItemResponse create(@PathVariable Long restaurantId,@Valid @RequestBody MenuRequest r){var c=category(restaurantId,r.category());return MenuController.MenuItemResponse.from(items.save(new MenuItem(c,r.name(),r.description(),r.price(),r.imageUrl(),r.available()==null||r.available())));}
- @PutMapping("/{id}") public MenuController.MenuItemResponse update(@PathVariable Long restaurantId,@PathVariable Long id,@Valid @RequestBody MenuRequest r){MenuItem item=items.findById(id).orElseThrow(()->new ResourceNotFoundException("Menu item was not found"));if(!item.getCategory().getRestaurantId().equals(restaurantId))throw new ResourceNotFoundException("Menu item was not found");item.update(category(restaurantId,r.category()),r.name(),r.description(),r.price(),r.imageUrl(),r.available()==null||r.available());return MenuController.MenuItemResponse.from(item);}
- @DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT) public void delete(@PathVariable Long restaurantId,@PathVariable Long id){MenuItem item=items.findById(id).orElseThrow(()->new ResourceNotFoundException("Menu item was not found"));if(!item.getCategory().getRestaurantId().equals(restaurantId))throw new ResourceNotFoundException("Menu item was not found");items.delete(item);}
- private void requireRestaurant(Long id){if(!restaurants.existsById(id))throw new ResourceNotFoundException("Restaurant was not found");}
- private Category category(Long id,String name){requireRestaurant(id);return categories.findByRestaurant_IdAndNameIgnoreCase(id,name.trim()).orElseGet(()->categories.save(new Category(restaurants.getReferenceById(id),name.trim())));}
- public record MenuRequest(@NotBlank @Size(max=100) String category,@NotBlank @Size(max=160) String name,@Size(max=2000) String description,@NotNull @DecimalMin("0.01") @Digits(integer=8,fraction=2) BigDecimal price,@Size(max=2000) String imageUrl,Boolean available){}
+
+import com.vasylyna.fooddelivery.menu.dto.MenuItemRequest;
+import com.vasylyna.fooddelivery.menu.dto.MenuItemResponse;
+import jakarta.validation.Valid;
+import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/admin/restaurants/{restaurantId}/menu")
+public class AdminMenuController {
+    private final MenuService service;
+
+    public AdminMenuController(MenuService service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    public List<MenuItemResponse> list(@PathVariable Long restaurantId) {
+        return service.listForAdmin(restaurantId);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public MenuItemResponse create(@PathVariable Long restaurantId, @Valid @RequestBody MenuItemRequest request) {
+        return service.createForAdmin(restaurantId, request.category(), request.name(), request.description(),
+                request.price(), request.imageUrl(), request.available());
+    }
+
+    @PutMapping("/{id}")
+    public MenuItemResponse update(@PathVariable Long restaurantId, @PathVariable Long id,
+            @Valid @RequestBody MenuItemRequest request) {
+        return service.updateForAdmin(restaurantId, id, request.category(), request.name(), request.description(),
+                request.price(), request.imageUrl(), request.available());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long restaurantId, @PathVariable Long id) {
+        service.deleteForAdmin(restaurantId, id);
+    }
 }

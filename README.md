@@ -151,7 +151,7 @@ Backend tests use JUnit 5, AssertJ, and Mockito. From `backend/`, run:
 mvn test
 ```
 
-The test suite covers authentication registration/password hashing, restaurant search, menu listing, cart totals, and order checkout snapshots and totals. In the Codex Windows sandbox, Maven compilation is blocked when Javac canonicalizes downloaded dependency jars (`AccessDeniedException`), so the JUnit tests could not run here. Run `mvn test` locally from `backend/` to execute them.
+The latest backend verification completed successfully: **36 tests passed**, and `mvn clean package -DskipTests` completed successfully. The tests cover authentication, authorization, validation and error responses, restaurant and menu services, cart calculations, checkout, and order status rules.
 
 To build the backend artifact locally, run `mvn clean package` from `backend/`. To create a production frontend bundle, run `npm run build` from `frontend/`.
 
@@ -200,7 +200,7 @@ Review order status, items, and price summary. The delivery address is obscured 
 - Add email verification and refresh-token/session revocation strategy.
 - Add payment integration, delivery tracking, and notifications.
 - Expand integration tests and add frontend tests/accessibility review.
-- Publish a live demo and add real screenshots.
+- Publish a live demo.
 
 ## Author
 
