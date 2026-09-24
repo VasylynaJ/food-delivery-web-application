@@ -157,12 +157,41 @@ To build the backend artifact locally, run `mvn clean package` from `backend/`. 
 
 ## Screenshots
 
-Add screenshots here after running the application, for example:
+### Homepage
 
-- Home page
-- Restaurant details and menu
-- Cart and checkout
-- Admin dashboard
+Explore the app’s landing page and featured restaurant discovery.
+
+![Food delivery application homepage](docs/screenshots/homepage.png)
+
+### Restaurants
+
+Browse restaurants, ratings, opening hours, and delivery fees.
+
+![Restaurant listing with search and cuisine filters](docs/screenshots/restaurants.png)
+
+### Restaurant menu
+
+View menu categories, item descriptions, prices, and add-to-cart actions.
+
+![Restaurant menu with food items and prices](docs/screenshots/restaurant-menu.png)
+
+### Shopping cart
+
+Review item quantities, subtotal, configured delivery fee, and total.
+
+![Shopping cart and order summary](docs/screenshots/cart.png)
+
+### Checkout
+
+Enter delivery details before placing an order.
+
+![Checkout delivery details form](docs/screenshots/checkout.png)
+
+### Order details
+
+Review order status, items, and price summary. The delivery address is obscured in this screenshot.
+
+![Order details with delivery address obscured](docs/screenshots/order-details.png)
 
 ## Future improvements
 
